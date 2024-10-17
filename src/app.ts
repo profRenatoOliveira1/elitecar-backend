@@ -3,10 +3,10 @@ import { DatabaseModel } from './model/DatabaseModel';
 
 const port: number = 3333;
 
-// só vou ligar SE o banco estiver funcionando
 new DatabaseModel().testeConexao().then((resdb) => {
-  if (resdb == true) {
+  if (resdb) {
     server.listen(port, () => {
+      console.clear();
       console.log(`Endereço do servidor: http://localhost:${port}`);
     });
   } else {
