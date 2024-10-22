@@ -141,7 +141,7 @@ export class Carro {
     static async listagemCarros(): Promise<Array<Carro> | null> {
         // objeto para armazenar a lista de carros
         const listaDeCarros: Array<Carro> = [];
-        
+
         try {
             // query de consulta ao banco de dados
             const querySelectCarro = `SELECT * FROM carro;`;
@@ -171,6 +171,56 @@ export class Carro {
         } catch (error) {
             console.log('Erro ao buscar lista de carros');
             return null;
+        }
+    }
+
+    /**
+     * Realiza o cadastro de um carro no banco de dados.
+     * 
+     * Esta função recebe um objeto do tipo `Carro` e insere seus dados (marca, modelo, ano e cor)
+     * na tabela `carro` do banco de dados. O método retorna um valor booleano indicando se o cadastro 
+     * foi realizado com sucesso.
+     * 
+     * @param {Carro} carro - Objeto contendo os dados do carro que será cadastrado. O objeto `Carro`
+     *                        deve conter os métodos `getMarca()`, `getModelo()`, `getAno()` e `getCor()`
+     *                        que retornam os respectivos valores do carro.
+     * @returns {Promise<boolean>} - Retorna `true` se o carro foi cadastrado com sucesso e `false` caso contrário.
+     *                               Em caso de erro durante o processo, a função trata o erro e retorna `false`.
+     * 
+     * @throws {Error} - Se ocorrer algum erro durante a execução do cadastro, uma mensagem de erro é exibida
+     *                   no console junto com os detalhes do erro.
+     */
+    static async cadastroCarro(carro: Carro): Promise<boolean> {
+        try {
+            // query para fazer insert de um carro no banco de dados
+            const queryInsertCarro = `INSERT INTO carro (marca, modelo, ano, cor)
+                                        VALUES
+                                        ('${carro.getMarca()}', 
+                                        '${carro.getModelo()}', 
+                                        ${carro.getAno()}, 
+                                        '${carro.getCor()}')
+                                        RETURNING id_carro;`;
+
+            // executa a query no banco e armazena a resposta
+            const respostaBD = await database.query(queryInsertCarro);
+
+            // verifica se a quantidade de linhas modificadas é diferente de 0
+            if (respostaBD.rowCount != 0) {
+                console.log(`Carro cadastrado com sucesso! ID do carro: ${respostaBD.rows[0].id_carro}`);
+                // true significa que o cadastro foi feito
+                return true;
+            }
+            // false significa que o cadastro NÃO foi feito.
+            return false;
+
+            // tratando o erro
+        } catch (error) {
+            // imprime outra mensagem junto com o erro
+            console.log('Erro ao cadastrar o carro. Verifique os logs para mais detalhes.');
+            // imprime o erro no console
+            console.log(error);
+            // retorno um valor falso
+            return false;
         }
     }
 }
