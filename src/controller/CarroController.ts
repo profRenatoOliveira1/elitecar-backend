@@ -75,8 +75,7 @@ export class CarroController extends Carro {
             } else {
                 // retorno uma mensagem de erro
                 return res.status(400).json({ mensagem: "Erro ao cadastra o carro. Entre em contato com o administrador do sistema."})
-            }
-            
+            } 
         } catch (error) {
             // lança uma mensagem de erro no console
             console.log(`Erro ao cadastrar um carro. ${error}`);

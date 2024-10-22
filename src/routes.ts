@@ -16,6 +16,7 @@ router.get("/", (req: Request, res: Response) => {
 */ 
 // Rota para listar os carros
 router.get("/lista/carros", CarroController.todos);
+router.post("/novo/carro", CarroController.novo);
 
 /* 
 * ROTAS PARA CLIENTES
