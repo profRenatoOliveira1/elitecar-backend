@@ -49,3 +49,15 @@ INSERT INTO pedido_venda (id_cliente, id_carro, data_pedido, valor_pedido) VALUE
 (3, 3, '2023-07-20', 45000.00),
 (4, 4, '2023-06-25', 78000.00),
 (5, 5, '2023-05-30', 53000.00);
+
+-- Alterar a tabela 'cliente' para adicionar o campo 'situacao'
+ALTER TABLE cliente 
+ADD COLUMN situacao BOOLEAN DEFAULT TRUE;
+
+-- Alterar a tabela 'carro' para adicionar o campo 'situacao'
+ALTER TABLE carro 
+ADD COLUMN situacao BOOLEAN DEFAULT TRUE;
+
+-- Alterar a tabela 'pedido_venda' para adicionar o campo 'situacao'
+ALTER TABLE pedido_venda 
+ADD COLUMN situacao BOOLEAN DEFAULT TRUE;
