@@ -157,6 +157,22 @@ export class PedidoVenda {
         }
     }
 
+    /**
+     * Cadastra um novo pedido de venda no banco de dados.
+     * 
+     * Esta função executa uma consulta SQL `INSERT` para registrar um novo pedido de venda com os dados fornecidos
+     * como parâmetros. Caso o cadastro seja bem-sucedido, a função retorna `true` e exibe uma mensagem de confirmação 
+     * com o ID do pedido. Se o cadastro falhar, retorna `false` e registra o erro no console.
+     * 
+     * @param {number} idCliente - O ID do cliente associado ao pedido.
+     * @param {number} idCarro - O ID do carro associado ao pedido.
+     * @param {Date} dataPedido - A data em que o pedido foi feito.
+     * @param {number} valorPedido - O valor total do pedido.
+     * 
+     * @returns {Promise<boolean>} - Retorna `true` se o pedido for cadastrado com sucesso; caso contrário, retorna `false`.
+     * 
+     * @throws {Error} - Caso ocorra um erro durante a execução da consulta SQL, o erro é registrado no console.
+     */
     static async cadastroPedido(idCliente: number, idCarro: number, dataPedido: Date, valorPedido: number): Promise<boolean> {
         try {
             const queryInsertPedido = `INSERT INTO pedido_venda (id_cliente, id_carro, data_pedido, valor_pedido)

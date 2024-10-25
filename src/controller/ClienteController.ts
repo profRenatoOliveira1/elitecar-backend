@@ -34,6 +34,20 @@ export class ClienteController extends Cliente {
         }
     }
 
+    /**
+     * Processa a requisição para cadastro de um novo cliente.
+     * 
+     * Esta função extrai os dados do cliente enviados no corpo da requisição e cria um objeto `Cliente` com essas informações.
+     * Em seguida, chama o método `cadastroCliente` para inserir o cliente no banco de dados. A função retorna uma resposta JSON 
+     * indicando sucesso ou falha no cadastro, conforme o resultado da operação.
+     * 
+     * @param {Request} req - Objeto de requisição do Express, que contém os dados do cliente no corpo (`body`).
+     * @param {Response} res - Objeto de resposta do Express, usado para enviar a resposta HTTP de volta ao cliente.
+     * 
+     * @returns {Promise<Response>} - Resposta HTTP JSON com uma mensagem de sucesso ou erro.
+     * 
+     * @throws {Error} - Em caso de erro, registra a mensagem no console e retorna um status 400 com uma mensagem JSON.
+     */
     static async novo(req: Request, res: Response): Promise<Response> {
         try {
             // recuperando informações do corpo da requisição e colocando em um objeto da interface CarroDTO

@@ -147,6 +147,20 @@ export class Cliente {
         }
     }
 
+    /**
+     * Cadastra um novo cliente no banco de dados.
+     * 
+     * Esta função recebe um objeto `Cliente`, extrai as informações de nome, CPF e telefone e
+     * realiza uma operação de inserção (INSERT) na tabela `cliente` do banco de dados. Se o 
+     * cadastro for bem-sucedido, a função retorna `true`, caso contrário, retorna `false`.
+     * 
+     * @param {Cliente} cliente - Objeto contendo os dados do cliente a ser cadastrado.
+     * 
+     * @returns {Promise<boolean>} - Retorna `true` se o cliente for cadastrado com sucesso, 
+     *                               ou `false` se ocorrer um erro ou falha na inserção.
+     * 
+     * @throws {Error} - Em caso de erro na consulta ao banco de dados, o erro é registrado no log.
+     */
     static async cadastroCliente(cliente: Cliente): Promise<boolean> {
         try {
             const queryInsertCliente = `INSERT INTO cliente (nome, cpf, telefone)

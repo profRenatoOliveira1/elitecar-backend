@@ -34,6 +34,21 @@ export class PedidoVendaController extends PedidoVenda {
         }
     }
 
+    /**
+     * Cadastra um novo pedido de venda.
+     * 
+     * Esta função recebe os dados de um pedido de venda (objeto `PedidoVendaDTO`) da requisição HTTP e os 
+     * utiliza para cadastrar um novo pedido no sistema, chamando a função `cadastroPedido` da classe `PedidoVenda`.
+     * Retorna uma resposta JSON indicando o sucesso ou falha do cadastro, juntamente com uma mensagem apropriada.
+     * 
+     * @param {Request} req - Objeto da requisição HTTP contendo o corpo com os dados do pedido de venda (`PedidoVendaDTO`).
+     * @param {Response} res - Objeto de resposta HTTP utilizado para enviar o status e mensagem ao cliente.
+     * 
+     * @returns {Promise<Response>} - Retorna uma resposta HTTP com status 200 e uma mensagem de sucesso se o cadastro for realizado com sucesso.
+     *                                Em caso de erro, retorna uma resposta com status 400 e uma mensagem de erro.
+     * 
+     * @throws {Error} - Caso ocorra um erro durante o processo de cadastro, o erro é registrado no console e uma resposta de erro é enviada.
+     */
     static async novo(req: Request, res: Response): Promise<Response> {
         try {
             const pedidoRecebido: PedidoVendaDTO = req.body;
