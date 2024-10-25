@@ -169,7 +169,8 @@ export class Carro {
             // retorna a lista de carros
             return listaDeCarros;
         } catch (error) {
-            console.log('Erro ao buscar lista de carros');
+            console.log('Erro ao buscar lista de carros. Verifique os logs para mais detalhes.');
+            console.log(error);
             return null;
         }
     }

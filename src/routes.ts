@@ -23,12 +23,14 @@ router.post("/novo/carro", CarroController.novo);
 */ 
 // Rota para listar os clientes
 router.get("/lista/clientes", ClienteController.todos);
+router.post("/novo/cliente", ClienteController.novo);
 
 /* 
 * ROTAS PARA PEDIDOS
 */ 
 // Rota para listar os pedidos
 router.get("/lista/pedidos", PedidoVendaController.todos);
+router.post("/novo/pedido", PedidoVendaController.novo);
 
 // exportando as rotas
 export { router };

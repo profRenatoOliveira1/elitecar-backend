@@ -1,5 +1,6 @@
 import { query } from "express";
 import { DatabaseModel } from "./DatabaseModel";
+import { inspect } from "util";
 
 const database = new DatabaseModel().pool;
 
@@ -140,8 +141,31 @@ export class Cliente {
             
             return listaDeClientes;
         } catch (error) {
-            console.log('Erro ao buscar lista de carros');
+            console.log('Erro ao buscar lista de carros. Consulte os logs para mais detalhes.');
+            console.log(error);
             return null;
+        }
+    }
+
+    static async cadastroCliente(cliente: Cliente): Promise<boolean> {
+        try {
+            const queryInsertCliente = `INSERT INTO cliente (nome, cpf, telefone)
+                                        VALUES
+                                        ('${cliente.getNome()}', '${cliente.getCpf()}', '${cliente.getTelefone()}')
+                                        RETURNING id_cliente`;
+
+            const respostaBD = await database.query(queryInsertCliente);
+
+            if(respostaBD.rowCount != 0) {
+                console.log(`Cliente cadastrado com sucesso. ID do cliente: ${respostaBD.rows[0].id_cliente}`);
+                return true;
+            }
+
+            return false;
+        } catch (error) {
+            console.log('Erro ao cadastrar o cliente. Consulte os logs para mais detalhes.');
+            console.log(error);
+            return false;
         }
     }
 }

@@ -156,4 +156,25 @@ export class PedidoVenda {
             return null;
         }
     }
+
+    static async cadastroPedido(idCliente: number, idCarro: number, dataPedido: Date, valorPedido: number): Promise<boolean> {
+        try {
+            const queryInsertPedido = `INSERT INTO pedido_venda (id_cliente, id_carro, data_pedido, valor_pedido)
+                                        VALUES
+                                        (${idCliente}, ${idCarro}, '${dataPedido}', ${valorPedido})
+                                        RETURNING id_pedido;`;
+
+            const respostaBD = await database.query(queryInsertPedido);
+            if(respostaBD.rowCount != 0) {
+                console.log(`Pedido de venda cadastrado com sucesso. ID pedido: ${respostaBD.rows[0].id_pedido}`);
+                return true;
+            }
+
+            return false;
+        } catch (error) {
+            console.log('Erro ao cadastrar o pedido. Consulte os logs para mais detalhes.');
+            console.log(error);
+            return false;
+        }
+    }
 }
