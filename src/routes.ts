@@ -18,6 +18,8 @@ router.get("/", (req: Request, res: Response) => {
 router.get("/lista/carros", CarroController.todos);
 // Rota para cadastrar um novo carro
 router.post("/novo/carro", CarroController.novo);
+// Rota para remover um carro
+router.delete("/delete/carro/:idCarro", CarroController.remover);
 
 /* 
 * ROTAS PARA CLIENTES
