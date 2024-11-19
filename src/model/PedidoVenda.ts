@@ -193,4 +193,31 @@ export class PedidoVenda {
             return false;
         }
     }
+
+    /**
+     * Remove um pedido de venda do banco de dados com base no ID fornecido.
+     *
+     * @param idPedido - O ID do pedido de venda a ser removido.
+     * @returns Uma promessa que resolve para `true` se o pedido foi removido com sucesso, ou `false` caso contrário.
+     *
+     * @throws Lança um erro se ocorrer um problema durante a execução da consulta no banco de dados.
+     */
+    static async removerPedido(idPedido: number): Promise<boolean> {
+        try {
+            const queryDeletePedidoVenda = `DELETE FROM pedido_venda WHERE id_pedido=${idPedido};`;
+
+            const respostaBD = await database.query(queryDeletePedidoVenda);
+
+            if(respostaBD.rowCount != 0) {
+                console.log(`Pedido de venda removido com sucesso! ID: ${idPedido}.`);
+                return true;
+            }
+
+            return false;
+        } catch (error) {
+            console.log('Erro ao remover o pedido. Consulte os logs para mais detalhes.');
+            console.log(error);
+            return false;
+        }
+    }
 }

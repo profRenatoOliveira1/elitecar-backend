@@ -75,4 +75,32 @@ export class ClienteController extends Cliente {
             return res.status(400).json({ mensagem: "Não foi possível cadastrar o cliente. Entre em contato com o administrador do sistema." });
         }
     }
+
+    /**
+     * Remove um cliente com base no ID fornecido na solicitação.
+     * 
+     * @param req - O objeto de solicitação do Express, contendo os parâmetros da solicitação.
+     * @param res - O objeto de resposta do Express, usado para enviar a resposta ao cliente.
+     * @returns Uma promessa que resolve com um objeto de resposta do Express.
+     * 
+     * @throws Retorna uma resposta de erro com status 400 se ocorrer um erro durante a remoção do cliente.
+     */
+    static async remover(req: Request, res: Response): Promise<Response> {
+        try {
+            const idCliente = parseInt(req.params.idCliente as string);
+
+            const respostaModelo = await Cliente.removerCliente(idCliente);
+
+            if(respostaModelo) {
+                return res.status(200).json({ mensagem: "Cliente removido com sucesso!"});
+            } else {
+                return res.status(400).json({ mensagem: "Não foi possível remover o cliente. Entre em contato com o administrador do sistema."});
+            }
+
+        } catch (error) {
+            console.log(`Erro ao remover o cliente. ${error}`);
+
+            return res.status(400).json({ mensagem: "Não foi possível remover o cliente. Entre em contato com o administrador do sistema." });
+        }
+    }
 }

@@ -182,4 +182,31 @@ export class Cliente {
             return false;
         }
     }
+
+    /**
+     * Remove um cliente do banco de dados com base no ID fornecido.
+     *
+     * @param idCliente - O ID do cliente a ser removido.
+     * @returns Uma Promise que resolve para `true` se o cliente foi removido com sucesso, ou `false` caso contrário.
+     *
+     * @throws Lança um erro se ocorrer um problema durante a execução da consulta.
+     */
+    static async removerCliente(idCliente: number): Promise<boolean> {
+        try {
+            const queryDeleteCliente = `DELETE FROM cliente WHERE id_cliente=${idCliente}`;
+
+            const respostaBD = await database.query(queryDeleteCliente);
+
+            if(respostaBD.rowCount != 0) {
+                console.log(`Carro removido com sucesso. ID removido: ${idCliente}`);
+                return true;
+            }
+
+            return false;
+        } catch (error) {
+            console.log('Erro ao remover o cliente. Consulte os logs para mais detalhes.');
+            console.log(error);
+            return false;
+        }
+    }
 }
