@@ -225,6 +225,14 @@ export class Carro {
         }
     }
 
+    /**
+     * Remove um carro do banco de dados com base no ID fornecido.
+     *
+     * @param {number} idCarro - O ID do carro a ser removido.
+     * @returns {Promise<boolean>} - Retorna uma promessa que resolve para true se o carro foi removido com sucesso, ou false caso contrário.
+     *
+     * @throws {Error} - Lança um erro se ocorrer um problema durante a remoção do carro.
+     */
     static async removerCarro(idCarro: number): Promise<boolean> {
         try {
             // cria uma query para deletar um objeto do banco de dados, passando como parâmetro o id do carro recebido na função

@@ -85,6 +85,15 @@ export class CarroController extends Carro {
         }
     }
 
+    /**
+     * Remove um carro do sistema.
+     *
+     * @param {Request} req - O objeto de solicitação HTTP.
+     * @param {Response} res - O objeto de resposta HTTP.
+     * @returns {Promise<Response>} - A resposta HTTP com o status da operação.
+     *
+     * @throws {Error} - Lança um erro se ocorrer algum problema durante a remoção do carro.
+     */
     static async remover(req: Request, res: Response): Promise<Response> {
         try {
             // recuperar o ID do carro a ser removido
