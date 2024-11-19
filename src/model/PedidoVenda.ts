@@ -220,4 +220,39 @@ export class PedidoVenda {
             return false;
         }
     }
+
+    /**
+     * Atualiza um pedido de venda no banco de dados.
+     *
+     * @param idPedidoVenda - O ID do pedido de venda a ser atualizado.
+     * @param idCliente - O ID do cliente associado ao pedido.
+     * @param idCarro - O ID do carro associado ao pedido.
+     * @param dataPedido - A data do pedido.
+     * @param valorPedido - O valor do pedido.
+     * @returns Uma Promise que resolve para `true` se o pedido foi atualizado com sucesso, ou `false` caso contrário.
+     * @throws Lança um erro se ocorrer um problema durante a atualização do pedido.
+     */
+    static async atualizarPedido(idPedidoVenda: number, idCliente: number, idCarro: number, dataPedido: Date, valorPedido: number): Promise<boolean> {
+        try {
+            const queryUpdatePedidoVenda = `UPDATE pedido_venda SET
+                                            id_cliente = ${idCliente},
+                                            id_carro = ${idCarro},
+                                            data_pedido = '${dataPedido}',
+                                            valor_pedido = ${valorPedido}
+                                            WHERE id_pedido = ${idPedidoVenda};`;
+
+            const respostaBD = await database.query(queryUpdatePedidoVenda);
+
+            if(respostaBD.rowCount != 0) {
+                console.log(`Pedido atualizado com sucesso: ID: ${idPedidoVenda}`);
+                return true;
+            }
+
+            return false;
+        } catch (error) {
+            console.log('Erro ao atualizar o pedido. Consulte os logs para mais detalhes.');
+            console.log(error);
+            return false;
+        }
+    }
 }

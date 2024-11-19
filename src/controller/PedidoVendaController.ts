@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { PedidoVenda } from "../model/PedidoVenda";
 
 interface PedidoVendaDTO {
+    idPedido?: number,
     idCliente: number,
     idCarro: number,
     dataPedido: Date,
@@ -94,6 +95,33 @@ export class PedidoVendaController extends PedidoVenda {
         } catch (error) {
             console.log(`Erro ao remover o pedido. ${error}`);
             return res.status(400).json({ mensagem: "Não foi possível remover o pedido. Entre em contato com o administrador do sistema." });
+        }
+    }
+
+    /**
+     * Atualiza um pedido de venda existente com base nos dados fornecidos.
+     *
+     * @param req - O objeto de solicitação HTTP, contendo os dados do pedido no corpo da solicitação e o ID do pedido nos parâmetros da URL.
+     * @param res - O objeto de resposta HTTP.
+     * @returns Uma promessa que resolve com um objeto de resposta HTTP.
+     *
+     * @throws Retorna uma resposta HTTP com status 400 e uma mensagem de erro se ocorrer um problema durante a atualização do pedido.
+     */
+    static async atualizar(req: Request, res: Response): Promise<Response> {
+        try {
+            const pedidoRecebido: PedidoVendaDTO = req.body;
+            const idPedidoRecebido = parseInt(req.params.idPedido as string);
+
+            const respostaModelo = await PedidoVenda.atualizarPedido(idPedidoRecebido, pedidoRecebido.idCliente, pedidoRecebido.idCarro, pedidoRecebido.dataPedido, pedidoRecebido.valorPedido);
+        
+            if(respostaModelo) {
+                return res.status(200).json({ mensagem: "Pedido atualizado com sucesso!" });
+            } else {
+                return res.status(400).json({ mensagem: "Não foi possível atualizar o pedido. Entre em contato com o administrador do sistema." });
+            }
+        } catch (error) {
+            console.log(`Erro ao remover o pedido. ${error}`);
+            return res.status(400).json({ mensagem: "Não foi possível atualizar o pedido. Entre em contato com o administrador do sistema." });
         }
     }
 }

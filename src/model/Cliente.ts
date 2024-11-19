@@ -209,4 +209,35 @@ export class Cliente {
             return false;
         }
     }
+
+    /**
+     * Atualiza as informações de um cliente no banco de dados.
+     *
+     * @param cliente - O objeto Cliente contendo as informações atualizadas.
+     * @returns Uma Promise que resolve para `true` se o cliente foi atualizado com sucesso, ou `false` caso contrário.
+     *
+     * @throws Lança um erro se ocorrer um problema durante a atualização do cliente.
+     */
+    static async atualizarCliente(cliente: Cliente): Promise<boolean> {
+        try {
+            const queryUpdateCliente = `UPDATE cliente SET
+                                        nome = '${cliente.getNome()}',
+                                        cpf = '${cliente.getCpf()}',
+                                        telefone = '${cliente.getTelefone()}'
+                                        WHERE id_cliente = ${cliente.getIdCliente()};`;
+
+            const respostaBD = await database.query(queryUpdateCliente);
+
+            if(respostaBD.rowCount != 0) {
+                console.log(`Cliente atualizado com sucesso. ID: ${cliente.getIdCliente()}`);
+                return true;
+            }
+
+            return false;
+        } catch (error) {
+            console.log('Erro ao remover o cliente. Consulte os logs para mais detalhes.');
+            console.log(error);
+            return false;
+        }
+    }
 }

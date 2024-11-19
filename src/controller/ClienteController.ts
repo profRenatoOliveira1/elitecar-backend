@@ -103,4 +103,41 @@ export class ClienteController extends Cliente {
             return res.status(400).json({ mensagem: "Não foi possível remover o cliente. Entre em contato com o administrador do sistema." });
         }
     }
+
+    /**
+     * Atualiza as informações de um cliente existente.
+     *
+     * @param req - Objeto de solicitação HTTP, contendo os dados do cliente no corpo da solicitação e o ID do cliente nos parâmetros.
+     * @param res - Objeto de resposta HTTP.
+     * @returns Uma promessa que resolve com uma resposta HTTP indicando o sucesso ou falha da operação.
+     *
+     * @throws Retorna uma resposta HTTP com status 400 e uma mensagem de erro se ocorrer um problema durante a atualização do cliente.
+     */
+    static async atualizar(req: Request, res: Response): Promise<Response> {
+        try {
+            const clienteRecebido: ClienteDTO = req.body;
+
+            const idClienteRecebido = parseInt(req.params.idCliente);
+
+            const clienteAtualizado = new Cliente(
+                clienteRecebido.nome,
+                clienteRecebido.cpf,
+                clienteRecebido.telefone
+            );
+
+            clienteAtualizado.setIdCliente(idClienteRecebido);
+
+            const respostaModelo = await Cliente.atualizarCliente(clienteAtualizado);
+
+            if(respostaModelo) {
+                return res.status(200).json({ mensagem: "Cliente atualizado com sucesso!" });
+            } else {
+                return res.status(400).json({ mensagem: "Não foi possível remover o cliente. Entre em contato com o administrador do sistema." });
+            }
+        } catch (error) {
+            console.log(`Erro ao remover o cliente. ${error}`);
+
+            return res.status(400).json({ mensagem: "Não foi possível remover o cliente. Entre em contato com o administrador do sistema." });
+        }
+    }
 }
