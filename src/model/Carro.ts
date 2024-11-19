@@ -262,4 +262,46 @@ export class Carro {
             return false;
         }
     }
+
+    /**
+     * Atualiza as informações de um carro no banco de dados.
+     *
+     * @param {Carro} carro - O objeto Carro contendo as informações atualizadas.
+     * @returns {Promise<boolean>} - Retorna uma Promise que resolve para true se a atualização foi bem-sucedida, ou false caso contrário.
+     *
+     * @throws {Error} - Lança um erro se ocorrer algum problema durante a execução da query.
+     */
+    static async atualizarCarro(carro: Carro): Promise<boolean> {
+        try {
+            // cria a query de update a ser executada no banco de dados
+            const queryUpdateCarro = `UPDATE carro SET
+                                        marca = '${carro.getMarca()}',
+                                        modelo = '${carro.getModelo()}',
+                                        ano = ${carro.getAno()},
+                                        cor = '${carro.getCor()}'
+                                        WHERE id_carro = ${carro.getIdCarro()};`;
+
+            // executar a query e armazenar a resposta do banco de dados em uma variável
+            const respostaBD = await database.query(queryUpdateCarro);
+
+            // verifica se alguma linha foi alterada
+            if(respostaBD.rowCount != 0) {
+                // imprime uma mensagem de sucesso no console
+                console.log(`Carro atualizado com sucesso! ID: ${carro.getIdCarro()}`);
+                // retorna ture, indicando que a query foi executada com sucesso
+                return true;
+            }
+
+            // retorna falso, indicando que a query não foi executada com sucesso
+            return false;
+            
+        } catch (error) {
+            // exibe uma mensagem de falha
+            console.log(`Erro ao atualizar o carro. Verifique os logs para mais detalhes.`);
+            // imprime o erro no console da API
+            console.log(error);
+            // retorna false, o que indica que a remoção não foi feita
+            return false;
+        }
+    }
 }

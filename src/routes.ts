@@ -20,6 +20,8 @@ router.get("/lista/carros", CarroController.todos);
 router.post("/novo/carro", CarroController.novo);
 // Rota para remover um carro
 router.delete("/delete/carro/:idCarro", CarroController.remover);
+// Rota para atualizar um carro
+router.put("/atualizar/carro/:idCarro", CarroController.atualizar);
 
 /* 
 * ROTAS PARA CLIENTES
