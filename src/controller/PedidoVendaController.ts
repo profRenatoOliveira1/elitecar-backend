@@ -1,12 +1,12 @@
-import { Request, Response } from "express";
-import { PedidoVenda } from "../model/PedidoVenda";
+import { Request, Response } from "express";    // Importando os tipos do Express para utilização nas funções
+import { PedidoVenda } from "../model/PedidoVenda"; // Importando a classe PedidoVenda para utilização dos métodos de acesso ao banco de dados
 
-interface PedidoVendaDTO {
-    idPedido?: number,
-    idCliente: number,
-    idCarro: number,
-    dataPedido: Date,
-    valorPedido: number
+interface PedidoVendaDTO { // Interface para representar os dados de um pedido de venda
+    idPedido?: number, // O ID do pedido é opcional, pois não é necessário informá-lo ao cadastrar um novo pedido
+    idCliente: number, // O ID do cliente é obrigatório
+    idCarro: number, // O ID do carro é obrigatório
+    dataPedido: Date, // A data do pedido é obrigatória
+    valorPedido: number // O valor do pedido é obrigatório
 }
 
 /**
@@ -25,13 +25,12 @@ export class PedidoVendaController extends PedidoVenda {
      * @throws Retorna um status 400 com uma mensagem de erro caso ocorra uma falha ao acessar a listagem de pedidos de venda.
      */
     static async todos(req: Request, res: Response): Promise<Response> {
-        try {
-            const listaPedidos = await PedidoVenda.listagemPedidos();
-
-            return res.status(200).json(listaPedidos);
-        } catch (error) {
-            console.log('Erro ao acessar listagem de carros');
-            return res.status(400).json({ mensagem: "Não foi possível acessar a listagem de carros" });
+        try { // Tenta acessar a listagem de pedidos de venda
+            const listaPedidos = await PedidoVenda.listagemPedidos(); // Chama o método de listagem de pedidos da classe PedidoVenda
+            return res.status(200).json(listaPedidos); // Retorna a lista de pedidos de venda em formato JSON
+        } catch (error) { // Se ocorrer um erro, retorna uma mensagem de erro
+            console.log('Erro ao acessar listagem de carros'); // Registra o erro no console
+            return res.status(400).json({ mensagem: "Não foi possível acessar a listagem de carros" }); // Retorna uma mensagem de erro
         }
     }
 
@@ -51,24 +50,23 @@ export class PedidoVendaController extends PedidoVenda {
      * @throws {Error} - Caso ocorra um erro durante o processo de cadastro, o erro é registrado no console e uma resposta de erro é enviada.
      */
     static async novo(req: Request, res: Response): Promise<Response> {
-        try {
-            const pedidoRecebido: PedidoVendaDTO = req.body;
+        try { // Tenta cadastrar um novo pedido de venda
+            const pedidoRecebido: PedidoVendaDTO = req.body; // Recebe os dados do pedido de venda do corpo da requisição
 
+            // Chama o método de cadastro de pedido da classe PedidoVenda, passando os dados do pedido recebido
             const repostaClasse = await PedidoVenda.cadastroPedido(pedidoRecebido.idCliente,
-                                                                    pedidoRecebido.idCarro,
-                                                                    pedidoRecebido.dataPedido,
-                                                                    pedidoRecebido.valorPedido);
+                pedidoRecebido.idCarro,
+                pedidoRecebido.dataPedido,
+                pedidoRecebido.valorPedido);
 
-            if (repostaClasse) {
-                // retornar uma mensagem de sucesso
-                return res.status(200).json({ mensagem: "Pedido cadastrado com sucesso!" });
-            } else {
-                // retorno uma mensagem de erro
-                return res.status(400).json({ mensagem: "Erro ao cadastra o pedido. Entre em contato com o administrador do sistema." })
+            if (repostaClasse) {    // Se a resposta da classe for verdadeira
+                return res.status(200).json({ mensagem: "Pedido cadastrado com sucesso!" }); // Retorna uma mensagem de sucesso
+            } else { // Se a resposta da classe for falsa
+                return res.status(400).json({ mensagem: "Erro ao cadastra o pedido. Entre em contato com o administrador do sistema." }); // Retorna uma mensagem de erro
             }
-        } catch (error) {
-            console.log(`Erro ao cadastrar o pedido. ${error}`);
-            return res.status(400).json({ mensagem: "Não foi possível cadastrar o pedido. Entre em contato com o administrador do sistema." });
+        } catch (error) { // Se ocorrer um erro durante o cadastro
+            console.log(`Erro ao cadastrar o pedido. ${error}`); // Registra o erro no console
+            return res.status(400).json({ mensagem: "Não foi possível cadastrar o pedido. Entre em contato com o administrador do sistema." }); // Retorna uma mensagem de erro
         }
     }
 
@@ -82,19 +80,19 @@ export class PedidoVendaController extends PedidoVenda {
      * @throws Retorna uma resposta com status 400 e uma mensagem de erro se ocorrer algum problema durante a remoção do pedido.
      */
     static async remover(req: Request, res: Response): Promise<Response> {
-        try {
-            const idPedido = parseInt(req.params.idPedido as string);
+        try { // Tenta remover o pedido
+            const idPedido = parseInt(req.params.idPedido as string); // Recebe o ID do pedido da requisição, convertendo para número inteiro
 
-            const repostaClasse = await PedidoVenda.removerPedido(idPedido);
+            const repostaClasse = await PedidoVenda.removerPedido(idPedido); // Chama o método de remoção de pedido da classe PedidoVenda
 
-            if(repostaClasse) {
-                return res.status(200).json({ mensagem: "Pedido de venda removido com sucesso!"});
-            } else {
-                return res.status(400).json({ mensagem: "Não foi possível remover o pedido. Entre em contato com o administrador do sistema." });
+            if (repostaClasse) { // Se a resposta da classe for verdadeira
+                return res.status(200).json({ mensagem: "Pedido de venda removido com sucesso!" }); // Retorna uma mensagem de sucesso
+            } else { // Se a resposta da classe for falsa
+                return res.status(400).json({ mensagem: "Não foi possível remover o pedido. Entre em contato com o administrador do sistema." }); // Retorna uma mensagem de erro
             }
-        } catch (error) {
-            console.log(`Erro ao remover o pedido. ${error}`);
-            return res.status(400).json({ mensagem: "Não foi possível remover o pedido. Entre em contato com o administrador do sistema." });
+        } catch (error) { // Se ocorrer um erro durante a remoção do pedido
+            console.log(`Erro ao remover o pedido. ${error}`); // Registra o erro no console
+            return res.status(400).json({ mensagem: "Não foi possível remover o pedido. Entre em contato com o administrador do sistema." }); // Retorna uma mensagem de erro
         }
     }
 
@@ -108,20 +106,25 @@ export class PedidoVendaController extends PedidoVenda {
      * @throws Retorna uma resposta HTTP com status 400 e uma mensagem de erro se ocorrer um problema durante a atualização do pedido.
      */
     static async atualizar(req: Request, res: Response): Promise<Response> {
-        try {
-            const pedidoRecebido: PedidoVendaDTO = req.body;
-            const idPedidoRecebido = parseInt(req.params.idPedido as string);
+        try { // Tenta atualizar o pedido
+            const pedidoRecebido: PedidoVendaDTO = req.body; // Recebe os dados do pedido de venda do corpo da requisição
+            const idPedidoRecebido = parseInt(req.params.idPedido as string); // Recebe o ID do pedido da requisição, convertendo para número inteiro
 
-            const respostaModelo = await PedidoVenda.atualizarPedido(idPedidoRecebido, pedidoRecebido.idCliente, pedidoRecebido.idCarro, pedidoRecebido.dataPedido, pedidoRecebido.valorPedido);
-        
-            if(respostaModelo) {
-                return res.status(200).json({ mensagem: "Pedido atualizado com sucesso!" });
-            } else {
-                return res.status(400).json({ mensagem: "Não foi possível atualizar o pedido. Entre em contato com o administrador do sistema." });
+            // Chama o método de atualização de pedido da classe PedidoVenda, passando os dados do pedido recebido
+            const respostaModelo = await PedidoVenda.atualizarPedido(idPedidoRecebido,
+                pedidoRecebido.idCliente, 
+                pedidoRecebido.idCarro, 
+                pedidoRecebido.dataPedido, 
+                pedidoRecebido.valorPedido);
+
+            if (respostaModelo) { // Se a resposta da classe for verdadeira
+                return res.status(200).json({ mensagem: "Pedido atualizado com sucesso!" }); // Retorna uma mensagem de sucesso
+            } else { // Se a resposta da classe for falsa
+                return res.status(400).json({ mensagem: "Não foi possível atualizar o pedido. Entre em contato com o administrador do sistema." }); // Retorna uma mensagem de erro
             }
-        } catch (error) {
-            console.log(`Erro ao remover o pedido. ${error}`);
-            return res.status(400).json({ mensagem: "Não foi possível atualizar o pedido. Entre em contato com o administrador do sistema." });
+        } catch (error) { // Se ocorrer um erro durante a atualização do pedido
+            console.log(`Erro ao remover o pedido. ${error}`); // Registra o erro no console
+            return res.status(400).json({ mensagem: "Não foi possível atualizar o pedido. Entre em contato com o administrador do sistema." }); // Retorna uma mensagem de erro
         }
     }
 }

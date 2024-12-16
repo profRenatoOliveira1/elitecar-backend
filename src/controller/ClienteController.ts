@@ -1,10 +1,10 @@
-import { Request, Response } from "express";
-import { Cliente } from "../model/Cliente";
+import { Request, Response } from "express"; // Importando os tipos do Express para utilização nas funções
+import { Cliente } from "../model/Cliente"; // Importando a classe Cliente para utilização dos métodos de acesso ao banco de dados
 
-interface ClienteDTO {
-    nome: string,
-    cpf: string,
-    telefone: string
+interface ClienteDTO { // Interface para representar os dados de um cliente
+    nome: string, // O nome do cliente é obrigatório
+    cpf: string, // O CPF do cliente é obrigatório
+    telefone: string // O telefone do cliente é obrigatório
 }
 
 /**
@@ -23,14 +23,12 @@ export class ClienteController extends Cliente {
      * @throws Retorna um status 400 com uma mensagem de erro caso ocorra uma falha ao acessar a listagem de clientes.
      */
     static async todos(req: Request, res: Response): Promise<Response> {
-        try {
-            const listaDeClientes = await Cliente.listagemClientes();
-            console.log(listaDeClientes);
-            
-            return res.status(200).json(listaDeClientes);
-        } catch (error) {
-            console.log('Erro ao acessar listagem de carros');
-            return res.status(400).json({ mensagem: "Não foi possível acessar a listagem de carros" });
+        try {   // Tenta acessar a listagem de clientes
+            const listaDeClientes = await Cliente.listagemClientes(); // Chama o método de listagem de clientes da classe Cliente
+            return res.status(200).json(listaDeClientes); // Retorna a lista de clientes em formato JSON
+        } catch (error) { // Se ocorrer um erro, retorna uma mensagem de erro
+            console.log('Erro ao acessar listagem de carros'); // Registra o erro no console
+            return res.status(400).json({ mensagem: "Não foi possível acessar a listagem de carros" }); // Retorna uma mensagem de erro
         }
     }
 
@@ -49,30 +47,19 @@ export class ClienteController extends Cliente {
      * @throws {Error} - Em caso de erro, registra a mensagem no console e retorna um status 400 com uma mensagem JSON.
      */
     static async novo(req: Request, res: Response): Promise<Response> {
-        try {
-            // recuperando informações do corpo da requisição e colocando em um objeto da interface CarroDTO
-            const clienteRecebido: ClienteDTO = req.body;
+        try { // Tenta cadastrar um novo cliente
+            const clienteRecebido: ClienteDTO = req.body; // recuperando informações do corpo da requisição e colocando em um objeto da interface CarroDTO   
+            const novoCliente = new Cliente(clienteRecebido.nome, clienteRecebido.cpf, clienteRecebido.telefone); // instanciando um objeto do tipo carro com as informações recebidas
+            const repostaClasse = await Cliente.cadastroCliente(novoCliente); // Chama a função de cadastro passando o objeto como parâmetro
 
-            // instanciando um objeto do tipo carro com as informações recebidas
-            const novoCliente = new Cliente(clienteRecebido.nome, clienteRecebido.cpf, clienteRecebido.telefone);
-
-            // Chama a função de cadastro passando o objeto como parâmetro
-            const repostaClasse = await Cliente.cadastroCliente(novoCliente);
-
-            // verifica a resposta da função
-            if(repostaClasse) {
-                // retornar uma mensagem de sucesso
-                return res.status(200).json({ mensagem: "Cliente cadastrado com sucesso!" });
-            } else {
-                // retorno uma mensagem de erro
-                return res.status(400).json({ mensagem: "Erro ao cadastra o cliente. Entre em contato com o administrador do sistema."})
+            if(repostaClasse) { // verifica se a resposta da função é verdadeira
+                return res.status(200).json({ mensagem: "Cliente cadastrado com sucesso!" }); // retornar uma mensagem de sucesso
+            } else { // se a resposta for falsa
+                return res.status(400).json({ mensagem: "Erro ao cadastra o cliente. Entre em contato com o administrador do sistema."}); // retorno uma mensagem de erro
             } 
-        } catch (error) {
-            // lança uma mensagem de erro no console
-            console.log(`Erro ao cadastrar o cliente. ${error}`);
-
-            // retorna uma mensagem de erro há quem chamou a mensagem
-            return res.status(400).json({ mensagem: "Não foi possível cadastrar o cliente. Entre em contato com o administrador do sistema." });
+        } catch (error) { // tratamento de erro
+            console.log(`Erro ao cadastrar o cliente. ${error}`); // lança uma mensagem de erro no console
+            return res.status(400).json({ mensagem: "Não foi possível cadastrar o cliente. Entre em contato com o administrador do sistema." }); // retorna uma mensagem de erro há quem chamou a mensagem
         }
     }
 
@@ -86,21 +73,18 @@ export class ClienteController extends Cliente {
      * @throws Retorna uma resposta de erro com status 400 se ocorrer um erro durante a remoção do cliente.
      */
     static async remover(req: Request, res: Response): Promise<Response> {
-        try {
-            const idCliente = parseInt(req.params.idCliente as string);
+        try { // Tenta remover o cliente
+            const idCliente = parseInt(req.params.idCliente as string); // Recupera o ID do cliente a ser removido
+            const respostaModelo = await Cliente.removerCliente(idCliente); // Chama o método de remoção de cliente da classe Cliente
 
-            const respostaModelo = await Cliente.removerCliente(idCliente);
-
-            if(respostaModelo) {
-                return res.status(200).json({ mensagem: "Cliente removido com sucesso!"});
-            } else {
-                return res.status(400).json({ mensagem: "Não foi possível remover o cliente. Entre em contato com o administrador do sistema."});
+            if(respostaModelo) { // Se a resposta do método for verdadeira
+                return res.status(200).json({ mensagem: "Cliente removido com sucesso!"}); // Retorna uma mensagem de sucesso
+            } else { // Se a resposta do método for falsa
+                return res.status(400).json({ mensagem: "Não foi possível remover o cliente. Entre em contato com o administrador do sistema."}); // Retorna uma mensagem de erro
             }
-
-        } catch (error) {
-            console.log(`Erro ao remover o cliente. ${error}`);
-
-            return res.status(400).json({ mensagem: "Não foi possível remover o cliente. Entre em contato com o administrador do sistema." });
+        } catch (error) { // Em caso de erro
+            console.log(`Erro ao remover o cliente. ${error}`); // Registra o erro no console
+            return res.status(400).json({ mensagem: "Não foi possível remover o cliente. Entre em contato com o administrador do sistema." }); // Retorna uma mensagem de erro
         }
     }
 
@@ -114,30 +98,29 @@ export class ClienteController extends Cliente {
      * @throws Retorna uma resposta HTTP com status 400 e uma mensagem de erro se ocorrer um problema durante a atualização do cliente.
      */
     static async atualizar(req: Request, res: Response): Promise<Response> {
-        try {
-            const clienteRecebido: ClienteDTO = req.body;
+        try { // Tenta atualizar o cliente
+            const clienteRecebido: ClienteDTO = req.body; // Recebe os dados do cliente do corpo da requisição
+            const idClienteRecebido = parseInt(req.params.idCliente); // Recebe o ID do cliente a ser atualizado
 
-            const idClienteRecebido = parseInt(req.params.idCliente);
-
+            // Cria um novo objeto Cliente com as informações recebidas
             const clienteAtualizado = new Cliente(
                 clienteRecebido.nome,
                 clienteRecebido.cpf,
                 clienteRecebido.telefone
             );
 
-            clienteAtualizado.setIdCliente(idClienteRecebido);
+            clienteAtualizado.setIdCliente(idClienteRecebido); // Define o ID do cliente a ser atualizado
 
-            const respostaModelo = await Cliente.atualizarCliente(clienteAtualizado);
+            const respostaModelo = await Cliente.atualizarCliente(clienteAtualizado); // Chama o método de atualização de cliente da classe Cliente
 
-            if(respostaModelo) {
-                return res.status(200).json({ mensagem: "Cliente atualizado com sucesso!" });
-            } else {
-                return res.status(400).json({ mensagem: "Não foi possível remover o cliente. Entre em contato com o administrador do sistema." });
+            if(respostaModelo) { // Se a resposta do método for verdadeira
+                return res.status(200).json({ mensagem: "Cliente atualizado com sucesso!" }); // Retorna uma mensagem de sucesso
+            } else { // Se a resposta do método for falsa
+                return res.status(400).json({ mensagem: "Não foi possível remover o cliente. Entre em contato com o administrador do sistema." }); // Retorna uma mensagem de erro
             }
-        } catch (error) {
-            console.log(`Erro ao remover o cliente. ${error}`);
-
-            return res.status(400).json({ mensagem: "Não foi possível remover o cliente. Entre em contato com o administrador do sistema." });
+        } catch (error) { // Em caso de erro
+            console.log(`Erro ao remover o cliente. ${error}`); // Registra o erro no console
+            return res.status(400).json({ mensagem: "Não foi possível remover o cliente. Entre em contato com o administrador do sistema." }); // Retorna uma mensagem de erro
         }
     }
 }

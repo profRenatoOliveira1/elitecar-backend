@@ -1,6 +1,6 @@
-import { DatabaseModel } from "./DatabaseModel";
+import { DatabaseModel } from "./DatabaseModel"; // Importa a classe de conexão com o banco de dados
 
-const database = new DatabaseModel().pool;
+const database = new DatabaseModel().pool; // Instancia a classe de conexão com o banco de dados e obtém o pool de conexões
 
 /**
  * Classe que representa um Pedido de Venda.
@@ -35,10 +35,10 @@ export class PedidoVenda {
      * @param valorPedido - Valor do pedido.
      */
     constructor(idCarro: number, idCliente: number, dataPedido: Date, valorPedido: number) {
-        this.idCarro = idCarro;
-        this.idCliente = idCliente;
-        this.dataPedido = dataPedido;
-        this.valorPedido = valorPedido;
+        this.idCarro = idCarro; // Atribui o valor do parâmetro ao atributo da classe
+        this.idCliente = idCliente; // Atribui o valor do parâmetro ao atributo da classe
+        this.dataPedido = dataPedido; // Atribui o valor do parâmetro ao atributo da classe
+        this.valorPedido = valorPedido; // Atribui o valor do parâmetro ao atributo da classe
     }
 
     /**
@@ -46,7 +46,7 @@ export class PedidoVenda {
      * @returns O identificador do pedido.
      */
     public getIdPedido(): number {
-        return this.idPedido;
+        return this.idPedido; // Retorna o valor do atributo
     }
 
     /**
@@ -54,7 +54,7 @@ export class PedidoVenda {
      * @param idPedido - Novo identificador do pedido.
      */
     public setIdPedido(idPedido: number): void {
-        this.idPedido = idPedido;
+        this.idPedido = idPedido; // Atribui o valor do parâmetro ao atributo da classe
     }
 
     /**
@@ -62,7 +62,7 @@ export class PedidoVenda {
      * @returns O identificador do carro.
      */
     public getIdCarro(): number {
-        return this.idCarro;
+        return this.idCarro; // Retorna o valor do atributo
     }
 
     /**
@@ -70,7 +70,7 @@ export class PedidoVenda {
      * @param idCarro - Novo identificador do carro.
      */
     public setIdCarro(idCarro: number): void {
-        this.idCarro = idCarro;
+        this.idCarro = idCarro; // Atribui o valor do parâmetro ao atributo da classe
     }
 
     /**
@@ -78,7 +78,7 @@ export class PedidoVenda {
      * @returns O identificador do cliente.
      */
     public getIdCliente(): number {
-        return this.idCliente;
+        return this.idCliente; // Retorna o valor do atributo
     }
 
     /**
@@ -86,7 +86,7 @@ export class PedidoVenda {
      * @param idCliente - Novo identificador do cliente.
      */
     public setIdCliente(idCliente: number): void {
-        this.idCliente = idCliente;
+        this.idCliente = idCliente; // Atribui o valor do parâmetro ao atributo da classe
     }
 
     /**
@@ -94,7 +94,7 @@ export class PedidoVenda {
      * @returns A data do pedido.
      */
     public getDataPedido(): Date {
-        return this.dataPedido;
+        return this.dataPedido; // Retorna o valor do atributo
     }
 
     /**
@@ -102,7 +102,7 @@ export class PedidoVenda {
      * @param dataPedido - Nova data do pedido.
      */
     public setDataPedido(dataPedido: Date): void {
-        this.dataPedido = dataPedido;
+        this.dataPedido = dataPedido; // Atribui o valor do parâmetro ao atributo da classe
     }
 
     /**
@@ -110,7 +110,7 @@ export class PedidoVenda {
      * @returns O valor do pedido.
      */
     public getValorPedido(): number {
-        return this.valorPedido;
+        return this.valorPedido; // Retorna o valor do atributo
     }
 
     /**
@@ -118,7 +118,7 @@ export class PedidoVenda {
      * @param valorPedido - Novo valor do pedido.
      */
     public setValorPedido(valorPedido: number): void {
-        this.valorPedido = valorPedido;
+        this.valorPedido = valorPedido; // Atribui o valor do parâmetro ao atributo da classe
     }
 
     /**
@@ -131,29 +131,52 @@ export class PedidoVenda {
      * - Caso ocorra uma falha na consulta ao banco, a função captura o erro, exibe uma mensagem no console e retorna `null`.
      */
     static async listagemPedidos(): Promise<Array<PedidoVenda> | null> {
-        const listaDePedidos: Array<PedidoVenda> = [];
+        const listaDePedidos: Array<any> = []; // Cria uma lista vazia para armazenar os pedidos de venda
 
-        try {
-            const querySelectPedidos = `SELECT * FROM pedido_venda;`;
-            const respostaBD = await database.query(querySelectPedidos);
+        try { // Tenta executar o bloco de código a seguir
+            // Consulta SQL para buscar todos os pedidos de venda
+            const querySelectPedidos = `SELECT 
+                                            pv.id_pedido,
+                                            c.id_cliente,
+                                            c.nome AS nome_cliente,
+                                            ca.id_carro,
+                                            ca.modelo AS nome_carro,
+                                            ca.marca,
+                                            pv.data_pedido,
+                                            pv.valor_pedido
+                                        FROM 
+                                            pedido_venda pv
+                                        JOIN 
+                                            cliente c ON pv.id_cliente = c.id_cliente
+                                        JOIN 
+                                            carro ca ON pv.id_carro = ca.id_carro
+                                        WHERE
+                                            pv.situacao = TRUE
+                                            AND c.situacao = TRUE
+                                            AND ca.situacao = TRUE;
+                                        `;
 
-            respostaBD.rows.forEach((linha) => {
-                const novoPedidoVenda = new PedidoVenda(
-                    linha.id_carro,
-                    linha.id_cliente,
-                    linha.data_pedido,
-                    parseFloat(linha.valor_pedido)
-                );
+            const respostaBD = await database.query(querySelectPedidos); // Executa a consulta no banco de dados
 
-                novoPedidoVenda.setIdPedido(linha.id_pedido);
+            respostaBD.rows.forEach((linha) => { // Para cada linha retornada da consulta
+                const pedidoVenda = { // Cria um objeto com os dados do pedido de venda
+                    idPedido: linha.id_pedido, // Atribui o ID do pedido
+                    idCliente: linha.id_cliente, // Atribui o ID do cliente
+                    nomeCliente: linha.nome_cliente, // Atribui o nome do cliente
+                    idCarro: linha.id_carro, // Atribui o ID do carro
+                    modeloCarro: linha.nome_carro, // Atribui o modelo do carro
+                    marcaCarro: linha.marca, // Atribui a marca do carro
+                    dataPedido: linha.data_pedido, // Atribui a data do pedido
+                    valorPedido: linha.valor_pedido // Atribui o valor do pedido
+                }
 
-                listaDePedidos.push(novoPedidoVenda);
+                listaDePedidos.push(pedidoVenda); // Adiciona o objeto à lista de pedidos
             });
 
-            return listaDePedidos;
-        } catch (error) {
-            console.log('Erro ao buscar lista de pedidos');
-            return null;
+            return listaDePedidos; // Retorna a lista de pedidos
+        } catch (error) { // Captura e trata erros
+            console.log('Erro ao buscar lista de pedidos'); // Exibe uma mensagem de erro no console
+            return null; // Retorna null
         }
     }
 
@@ -174,23 +197,24 @@ export class PedidoVenda {
      * @throws {Error} - Caso ocorra um erro durante a execução da consulta SQL, o erro é registrado no console.
      */
     static async cadastroPedido(idCliente: number, idCarro: number, dataPedido: Date, valorPedido: number): Promise<boolean> {
-        try {
+        try { // Tenta executar o bloco de código a seguir
+            // Consulta SQL para inserir um novo pedido de venda
             const queryInsertPedido = `INSERT INTO pedido_venda (id_cliente, id_carro, data_pedido, valor_pedido)
                                         VALUES
                                         (${idCliente}, ${idCarro}, '${dataPedido}', ${valorPedido})
                                         RETURNING id_pedido;`;
 
-            const respostaBD = await database.query(queryInsertPedido);
-            if(respostaBD.rowCount != 0) {
-                console.log(`Pedido de venda cadastrado com sucesso. ID pedido: ${respostaBD.rows[0].id_pedido}`);
-                return true;
+            const respostaBD = await database.query(queryInsertPedido); // Executa a consulta no banco de dados
+            if(respostaBD.rowCount != 0) { // verifica se a consulta retorna pelo menos uma linha
+                console.log(`Pedido de venda cadastrado com sucesso. ID pedido: ${respostaBD.rows[0].id_pedido}`); // Exibe uma mensagem de confirmação se o pedido for cadastrado com sucesso
+                return true; // Retorna true
             }
 
-            return false;
-        } catch (error) {
-            console.log('Erro ao cadastrar o pedido. Consulte os logs para mais detalhes.');
-            console.log(error);
-            return false;
+            return false; // Retorna false se a consulta não retornar nenhuma linha
+        } catch (error) { // Captura e trata erros
+            console.log('Erro ao cadastrar o pedido. Consulte os logs para mais detalhes.'); // Exibe uma mensagem de erro no console
+            console.log(error); // Exibe o erro no console
+            return false; // Retorna false
         }
     }
 
@@ -203,21 +227,21 @@ export class PedidoVenda {
      * @throws Lança um erro se ocorrer um problema durante a execução da consulta no banco de dados.
      */
     static async removerPedido(idPedido: number): Promise<boolean> {
-        try {
-            const queryDeletePedidoVenda = `DELETE FROM pedido_venda WHERE id_pedido=${idPedido};`;
+        try { // Tenta executar o bloco de código a seguir
+            const queryDeletePedidoVenda = `DELETE FROM pedido_venda WHERE id_pedido=${idPedido};`; // Consulta SQL para remover um pedido de venda
 
-            const respostaBD = await database.query(queryDeletePedidoVenda);
+            const respostaBD = await database.query(queryDeletePedidoVenda); // Executa a consulta no banco de dados
 
-            if(respostaBD.rowCount != 0) {
-                console.log(`Pedido de venda removido com sucesso! ID: ${idPedido}.`);
-                return true;
+            if(respostaBD.rowCount != 0) { // Verifica se a consulta retornou pelo menos uma linha
+                console.log(`Pedido de venda removido com sucesso! ID: ${idPedido}.`); // Exibe uma mensagem de confirmação no console se o pedido for removido com sucesso
+                return true; // Retorna true
             }
 
-            return false;
-        } catch (error) {
-            console.log('Erro ao remover o pedido. Consulte os logs para mais detalhes.');
-            console.log(error);
-            return false;
+            return false; // Retorna false se a consulta não retornar nenhuma linha
+        } catch (error) { // Captura e trata erros
+            console.log('Erro ao remover o pedido. Consulte os logs para mais detalhes.'); // Exibe uma mensagem de erro no console
+            console.log(error); // Exibe o erro no console
+            return false; // Retorna false
         }
     }
 
@@ -233,7 +257,8 @@ export class PedidoVenda {
      * @throws Lança um erro se ocorrer um problema durante a atualização do pedido.
      */
     static async atualizarPedido(idPedidoVenda: number, idCliente: number, idCarro: number, dataPedido: Date, valorPedido: number): Promise<boolean> {
-        try {
+        try { // Tenta executar o bloco de código a seguir
+            // Consulta SQL para atualizar um pedido de venda
             const queryUpdatePedidoVenda = `UPDATE pedido_venda SET
                                             id_cliente = ${idCliente},
                                             id_carro = ${idCarro},
@@ -241,18 +266,18 @@ export class PedidoVenda {
                                             valor_pedido = ${valorPedido}
                                             WHERE id_pedido = ${idPedidoVenda};`;
 
-            const respostaBD = await database.query(queryUpdatePedidoVenda);
+            const respostaBD = await database.query(queryUpdatePedidoVenda); // Executa a consulta no banco de dados
 
-            if(respostaBD.rowCount != 0) {
-                console.log(`Pedido atualizado com sucesso: ID: ${idPedidoVenda}`);
-                return true;
+            if(respostaBD.rowCount != 0) { // Verifica se a consulta retornou pelo menos uma linha
+                console.log(`Pedido atualizado com sucesso: ID: ${idPedidoVenda}`); // Exibe uma mensagem de confirmação no console se o pedido for atualizado com sucesso
+                return true; // Retorna true
             }
 
-            return false;
-        } catch (error) {
-            console.log('Erro ao atualizar o pedido. Consulte os logs para mais detalhes.');
-            console.log(error);
-            return false;
+            return false; // Retorna false se a consulta não retornar nenhuma linha
+        } catch (error) { // Captura e trata erros
+            console.log('Erro ao atualizar o pedido. Consulte os logs para mais detalhes.'); // Exibe uma mensagem de erro no console
+            console.log(error); // Exibe o erro no console
+            return false; // Retorna false
         }
     }
 }

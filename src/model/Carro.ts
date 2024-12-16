@@ -1,7 +1,6 @@
-import { DatabaseModel } from "./DatabaseModel";
+import { DatabaseModel } from "./DatabaseModel"; // Importa a classe DatabaseModel para realizar a conexão com o banco de dados
 
-// armazenei o pool de conexões
-const database = new DatabaseModel().pool;
+const database = new DatabaseModel().pool; // Inicializa o pool de conexões com o banco de dados
 
 /**
  * Classe que representa um carro.
@@ -34,10 +33,10 @@ export class Carro {
         ano: number,
         cor: string
     ) {
-        this.marca = marca;
-        this.modelo = modelo;
-        this.ano = ano;
-        this.cor = cor;
+        this.marca = marca; // atribui a marca do carro
+        this.modelo = modelo; // atribui o modelo do carro
+        this.ano = ano; // atribui o ano de fabricação do carro
+        this.cor = cor; // atribui a cor do carro
     }
 
     /* Métodos get e set */
@@ -46,7 +45,7 @@ export class Carro {
      * @returns o identificador do carro
      */
     public getIdCarro(): number {
-        return this.idCarro;
+        return this.idCarro; // retorna o identificador do carro
     }
 
     /**
@@ -54,7 +53,7 @@ export class Carro {
      * @param idCarro novo identificado do carro
      */
     public setIdCarro(idCarro: number): void {
-        this.idCarro = idCarro;
+        this.idCarro = idCarro; // atribui o identificador do carro
     }
 
     /**
@@ -63,7 +62,7 @@ export class Carro {
      * @returns {string} A marca do carro.
      */
     public getMarca(): string {
-        return this.marca;
+        return this.marca; // retorna a marca do carro
     }
 
     /**
@@ -72,7 +71,7 @@ export class Carro {
      * @param marca - A marca do carro a ser definida.
      */
     public setMarca(marca: string): void {
-        this.marca = marca;
+        this.marca = marca; // atribui a marca do carro
     }
 
     /**
@@ -81,7 +80,7 @@ export class Carro {
      * @returns {string} O modelo do carro.
      */
     public getModelo(): string {
-        return this.modelo;
+        return this.modelo; // retorna o modelo do carro
     }
 
     /**
@@ -90,7 +89,7 @@ export class Carro {
      * @param modelo - O nome do modelo do carro.
      */
     public setModelo(modelo: string): void {
-        this.modelo = modelo;
+        this.modelo = modelo; // atribui o modelo do carro
     }
 
     /**
@@ -99,7 +98,7 @@ export class Carro {
      * @returns O ano do carro.
      */
     public getAno(): number {
-        return this.ano;
+        return this.ano; // retorna o ano do carro
     }
 
     /**
@@ -108,7 +107,7 @@ export class Carro {
      * @param ano - O ano a ser definido para o carro.
      */
     public setAno(ano: number): void {
-        this.ano = ano;
+        this.ano = ano; // atribui o ano do carro
     }
 
     /**
@@ -117,7 +116,7 @@ export class Carro {
      * @returns {string} A cor do carro.
      */
     public getCor(): string {
-        return this.cor;
+        return this.cor; // retorna a cor do carro
     }
 
     /**
@@ -126,7 +125,7 @@ export class Carro {
      * @param cor - A nova cor do carro.
      */
     public setCor(cor: string): void {
-        this.cor = cor;
+        this.cor = cor; // atribui a cor do carro
     }
 
     /**
@@ -139,39 +138,31 @@ export class Carro {
      * - Se houver falha na consulta ao banco, a função captura o erro, exibe uma mensagem no console e retorna `null`.
      */
     static async listagemCarros(): Promise<Array<Carro> | null> {
-        // objeto para armazenar a lista de carros
-        const listaDeCarros: Array<Carro> = [];
+        const listaDeCarros: Array<Carro> = []; // cria uma lista de carros vazia
 
-        try {
-            // query de consulta ao banco de dados
-            const querySelectCarro = `SELECT * FROM carro;`;
+        try { // tenta executar o código
+            const querySelectCarro = `SELECT * FROM carro;`; // cria uma query para selecionar todos os carros do banco de dados
 
-            // fazendo a consulta e guardando a resposta
-            const respostaBD = await database.query(querySelectCarro);
+            const respostaBD = await database.query(querySelectCarro); // executa a query no banco de dados
 
-            // usando a resposta para instanciar um objeto do tipo carro
-            respostaBD.rows.forEach((linha) => {
-                // instancia (cria) objeto carro
-                const novoCarro = new Carro(
-                    linha.marca,
-                    linha.modelo,
-                    linha.ano,
-                    linha.cor
+            respostaBD.rows.forEach((linha) => { // para cada linha retornada
+                const novoCarro = new Carro( // cria um novo objeto do tipo Carro
+                    linha.marca, // atribui a marca do carro
+                    linha.modelo, // atribui o modelo do carro
+                    linha.ano, // atribui o ano de fabricação do carro
+                    linha.cor // atribui a cor do carro
                 );
 
-                // atribui o ID objeto
-                novoCarro.setIdCarro(linha.id_carro);
+                novoCarro.setIdCarro(linha.id_carro); // atribui o ID do carro
 
-                // adiciona o objeto na lista
-                listaDeCarros.push(novoCarro);
+                listaDeCarros.push(novoCarro); // adiciona o carro na lista
             });
 
-            // retorna a lista de carros
-            return listaDeCarros;
-        } catch (error) {
-            console.log('Erro ao buscar lista de carros. Verifique os logs para mais detalhes.');
-            console.log(error);
-            return null;
+            return listaDeCarros; // retorna a lista de carros
+        } catch (error) { // em caso de erro
+            console.log('Erro ao buscar lista de carros. Verifique os logs para mais detalhes.'); // exibe uma mensagem de erro
+            console.log(error); // exibe o erro
+            return null; // retorna nulo
         }
     }
 
@@ -192,8 +183,8 @@ export class Carro {
      *                   no console junto com os detalhes do erro.
      */
     static async cadastroCarro(carro: Carro): Promise<boolean> {
-        try {
-            // query para fazer insert de um carro no banco de dados
+        try { // tenta executar o código
+            // cria uma query para inserir um novo carro no banco de dados
             const queryInsertCarro = `INSERT INTO carro (marca, modelo, ano, cor)
                                         VALUES
                                         ('${carro.getMarca()}', 
@@ -202,26 +193,19 @@ export class Carro {
                                         '${carro.getCor()}')
                                         RETURNING id_carro;`;
 
-            // executa a query no banco e armazena a resposta
-            const respostaBD = await database.query(queryInsertCarro);
+            const respostaBD = await database.query(queryInsertCarro); // executa a query no banco de dados
 
-            // verifica se a quantidade de linhas modificadas é diferente de 0
-            if (respostaBD.rowCount != 0) {
-                console.log(`Carro cadastrado com sucesso! ID do carro: ${respostaBD.rows[0].id_carro}`);
-                // true significa que o cadastro foi feito
-                return true;
+            if (respostaBD.rowCount != 0) { // se a quantidade de linhas modificadas for diferente de 0
+                console.log(`Carro cadastrado com sucesso! ID do carro: ${respostaBD.rows[0].id_carro}`); // exibe uma mensagem de sucesso
+                return true; // retorna true, indicando que o cadastro foi feito
             }
-            // false significa que o cadastro NÃO foi feito.
-            return false;
 
-            // tratando o erro
-        } catch (error) {
-            // imprime outra mensagem junto com o erro
-            console.log('Erro ao cadastrar o carro. Verifique os logs para mais detalhes.');
-            // imprime o erro no console
-            console.log(error);
-            // retorno um valor falso
-            return false;
+            return false; // retorna false, indicando que o cadastro não foi feito
+
+        } catch (error) { // em caso de erro
+            console.log('Erro ao cadastrar o carro. Verifique os logs para mais detalhes.'); // exibe uma mensagem de erro
+            console.log(error); // exibe o erro
+            return false; // retorna false, indicando que o cadastro não foi feito
         }
     }
 
@@ -234,32 +218,21 @@ export class Carro {
      * @throws {Error} - Lança um erro se ocorrer um problema durante a remoção do carro.
      */
     static async removerCarro(idCarro: number): Promise<boolean> {
-        try {
-            // cria uma query para deletar um objeto do banco de dados, passando como parâmetro o id do carro recebido na função
-            const queryDeleteCarro = `DELETE FROM carro WHERE id_carro = ${idCarro}`;
+        try { // tenta executar o código
+            const queryDeleteCarro = `DELETE FROM carro WHERE id_carro = ${idCarro}`; // cria uma query para remover um carro do banco de dados
         
-            // executar a query e armazenar a resposta do banco de dados
-            const respostaBD = await database.query(queryDeleteCarro);
+            const respostaBD = await database.query(queryDeleteCarro); // executa a query no banco de dados
 
-            // verifica se o número de linhas alteradas é diferente de 0
-            if(respostaBD.rowCount != 0) {
-                // exibe uma mensagem no console
-                console.log(`Carro removido com sucesso. ID removido: ${idCarro}`);
-                // retorna true, indicando que o carro foi removido
-                return true;
+            if(respostaBD.rowCount != 0) { // se a quantidade de linhas modificadas for diferente de 0
+                console.log(`Carro removido com sucesso. ID removido: ${idCarro}`); // exibe uma mensagem de sucesso
+                return true; // retorna true, indicando que a remoção foi feita
             }
 
-            // retorna false, o que indica que a remoção não foi feita 
-            return false;
-
-        // trata qualquer erro que possa acontecer no caminho
-        } catch (error) {
-            // exibe uma mensagem de falha
-            console.log(`Erro ao remover carro. Verifique os logs para mais detalhes.`);
-            // imprime o erro no console da API
-            console.log(error);
-            // retorna false, o que indica que a remoção não foi feita
-            return false;
+            return false; // retorna false, indicando que a remoção não foi feita
+        } catch (error) { // em caso de erro
+            console.log(`Erro ao remover carro. Verifique os logs para mais detalhes.`); // exibe uma mensagem de erro
+            console.log(error); // exibe o erro
+            return false; // retorna false, indicando que a remoção não foi feita
         }
     }
 
@@ -272,7 +245,7 @@ export class Carro {
      * @throws {Error} - Lança um erro se ocorrer algum problema durante a execução da query.
      */
     static async atualizarCarro(carro: Carro): Promise<boolean> {
-        try {
+        try { // tenta executar o código
             // cria a query de update a ser executada no banco de dados
             const queryUpdateCarro = `UPDATE carro SET
                                         marca = '${carro.getMarca()}',
@@ -281,27 +254,19 @@ export class Carro {
                                         cor = '${carro.getCor()}'
                                         WHERE id_carro = ${carro.getIdCarro()};`;
 
-            // executar a query e armazenar a resposta do banco de dados em uma variável
-            const respostaBD = await database.query(queryUpdateCarro);
+            const respostaBD = await database.query(queryUpdateCarro);  // executa a query no banco de dados
 
-            // verifica se alguma linha foi alterada
-            if(respostaBD.rowCount != 0) {
-                // imprime uma mensagem de sucesso no console
-                console.log(`Carro atualizado com sucesso! ID: ${carro.getIdCarro()}`);
-                // retorna ture, indicando que a query foi executada com sucesso
-                return true;
+            if(respostaBD.rowCount != 0) { // se a quantidade de linhas modificadas for diferente de 0
+                console.log(`Carro atualizado com sucesso! ID: ${carro.getIdCarro()}`); // exibe uma mensagem de sucesso
+                return true; // retorna true, indicando que a query foi executada com sucesso
             }
 
-            // retorna falso, indicando que a query não foi executada com sucesso
-            return false;
+            return false; // retorna false, indicando que a query não foi executada com sucesso
             
-        } catch (error) {
-            // exibe uma mensagem de falha
-            console.log(`Erro ao atualizar o carro. Verifique os logs para mais detalhes.`);
-            // imprime o erro no console da API
-            console.log(error);
-            // retorna false, o que indica que a remoção não foi feita
-            return false;
+        } catch (error) { // em caso de erro
+            console.log(`Erro ao atualizar o carro. Verifique os logs para mais detalhes.`);    // exibe uma mensagem de erro
+            console.log(error); // exibe o erro
+            return false; // retorna false, indicando que a query não foi executada com sucesso
         }
     }
 }

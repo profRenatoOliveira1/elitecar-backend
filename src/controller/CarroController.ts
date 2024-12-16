@@ -1,11 +1,11 @@
-import { Request, Response } from "express";
-import { Carro } from "../model/Carro";
+import { Request, Response } from "express"; // Importando os tipos do Express para utilização nas funções
+import { Carro } from "../model/Carro"; // Importando a classe Carro para utilização dos métodos de acesso ao banco de dados
 
-interface CarroDTO {
-    marca: string,
-    modelo: string,
-    ano: number,
-    cor: string
+interface CarroDTO { // Interface para representar os dados de um carro
+    marca: string, // A marca do carro é obrigatória
+    modelo: string, // O modelo do carro é obrigatório
+    ano: number, // O ano do carro é obrigatório
+    cor: string // A cor do carro é obrigatória
 }
 
 /**
@@ -24,18 +24,12 @@ export class CarroController extends Carro {
     * @throws Retorna um status 400 com uma mensagem de erro caso ocorra uma falha ao acessar a listagem de carros.
     */
     static async todos(req: Request, res: Response): Promise<Response> {
-        try {
-            // acessa a função de listar os carros e armazena o resultado
-            const listaDeCarros = await Carro.listagemCarros();
-
-            // retorna a lista de carros há quem fez a requisição web
-            return res.status(200).json(listaDeCarros);
-        } catch (error) {
-            // lança uma mensagem de erro no console
-            console.log('Erro ao acessar listagem de carros');
-
-            // retorna uma mensagem de erro há quem chamou a mensagem
-            return res.status(400).json({ mensagem: "Não foi possível acessar a listagem de carros" });
+        try { // Tenta acessar a listagem de carros
+            const listaDeCarros = await Carro.listagemCarros(); // Chama o método de listagem de carros da classe Carro
+            return res.status(200).json(listaDeCarros); // Retorna a lista de carros em formato JSON
+        } catch (error) { // Se ocorrer um erro, retorna uma mensagem de erro
+            console.log('Erro ao acessar listagem de carros'); // Registra o erro no console
+            return res.status(400).json({ mensagem: "Não foi possível acessar a listagem de carros" }); // Retorna uma mensagem de erro
         }
     }
 
@@ -55,9 +49,8 @@ export class CarroController extends Carro {
     *                   resposta HTTP 400 com uma mensagem de erro é enviada ao cliente.
     */
     static async novo(req: Request, res: Response): Promise<Response> {
-        try {
-            // recuperando informações do corpo da requisição e colocando em um objeto da interface CarroDTO
-            const carroRecebido: CarroDTO = req.body;
+        try { // Tenta cadastrar um novo carro
+            const carroRecebido: CarroDTO = req.body; // recuperando informações do corpo da requisição e colocando em um objeto da interface CarroDTO
 
             // instanciando um objeto do tipo carro com as informações recebidas
             const novoCarro = new Carro(carroRecebido.marca,
@@ -65,23 +58,16 @@ export class CarroController extends Carro {
                 carroRecebido.ano,
                 carroRecebido.cor);
 
-            // Chama a função de cadastro passando o objeto como parâmetro
-            const repostaClasse = await Carro.cadastroCarro(novoCarro);
+            const repostaClasse = await Carro.cadastroCarro(novoCarro); // Chama a função de cadastro passando o objeto como parâmetro
 
-            // verifica a resposta da função
-            if (repostaClasse) {
-                // retornar uma mensagem de sucesso
-                return res.status(200).json({ mensagem: "Carro cadastrado com sucesso!" });
-            } else {
-                // retorno uma mensagem de erro
-                return res.status(400).json({ mensagem: "Erro ao cadastra o carro. Entre em contato com o administrador do sistema." })
+            if (repostaClasse) { // verifica se a resposta da função é verdadeira
+                return res.status(200).json({ mensagem: "Carro cadastrado com sucesso!" }); // retornar uma mensagem de sucesso
+            } else { // se a resposta for falsa
+                return res.status(400).json({ mensagem: "Erro ao cadastra o carro. Entre em contato com o administrador do sistema." }); // retorno uma mensagem de erro
             }
-        } catch (error) {
-            // lança uma mensagem de erro no console
-            console.log(`Erro ao cadastrar um carro. ${error}`);
-
-            // retorna uma mensagem de erro há quem chamou a mensagem
-            return res.status(400).json({ mensagem: "Não foi possível cadastrar o carro. Entre em contato com o administrador do sistema." });
+        } catch (error) { // tratamento de erro
+            console.log(`Erro ao cadastrar um carro. ${error}`); // lança uma mensagem de erro no console
+            return res.status(400).json({ mensagem: "Não foi possível cadastrar o carro. Entre em contato com o administrador do sistema." }); // retorna uma mensagem de erro há quem chamou a mensagem
         }
     }
 
@@ -95,29 +81,18 @@ export class CarroController extends Carro {
      * @throws {Error} - Lança um erro se ocorrer algum problema durante a remoção do carro.
      */
     static async remover(req: Request, res: Response): Promise<Response> {
-        try {
-            // recuperar o ID do carro a ser removido
-            const idCarro = parseInt(req.params.idCarro as string);
+        try { // Tenta remover um carro
+            const idCarro = parseInt(req.params.idCarro as string); // Recupera o ID do carro a ser removido
+            const repostaModelo = await Carro.removerCarro(idCarro); // Chama o método de remoção de carro da classe Carro
 
-            // chamar a função do modelo e armazenar a resposta
-            const repostaModelo = await Carro.removerCarro(idCarro);
-
-            // verifica se a reposta do modelo foi verdadeiro (true)
-            if(repostaModelo) {
-                // retorma um status 200 com uma mensagem de sucesso
-                return res.status(200).json({ mensagem: "O carro foi removido com sucesso!"});
-            } else {
-                // retorna um status 400 com uma mensagem de erro
-                return res.status(400).json({ mensagem: "Erro ao remover o carro. Entre em contato com o administrador do sistema." });
+            if(repostaModelo) { //  Se a resposta do método for verdadeira
+                return res.status(200).json({ mensagem: "O carro foi removido com sucesso!"}); // Retorna uma mensagem de sucesso
+            } else { // Se a resposta do método for falsa
+                return res.status(400).json({ mensagem: "Erro ao remover o carro. Entre em contato com o administrador do sistema." }); // Retorna uma mensagem de erro
             }
-
-        // trata qualquer erro que aconteça durante o processo
-        } catch (error) {
-            // lança uma mensagem de erro no console
-            console.log(`Erro ao remover um carro. ${error}`);
-
-            // retorna uma mensagem de erro há quem chamou a mensagem
-            return res.status(400).json({ mensagem: "Não foi possível remover o carro. Entre em contato com o administrador do sistema." });
+        } catch (error) { // tratamento de erro
+            console.log(`Erro ao remover um carro. ${error}`); // lança uma mensagem de erro no console
+            return res.status(400).json({ mensagem: "Não foi possível remover o carro. Entre em contato com o administrador do sistema." }); // retorna uma mensagem de erro há quem chamou a mensagem
         }
     }
 
@@ -131,11 +106,9 @@ export class CarroController extends Carro {
      * @throws Retorna um status 400 com uma mensagem de erro se ocorrer uma exceção durante o processo de atualização.
      */
     static async atualizar(req: Request, res: Response): Promise<Response> {
-        try {
-            // recupera as informações a serem atualizadas no corpo da requisição
-            const carroRecebido: CarroDTO = req.body;
-            // recupera o ID do carro a ser atualizado
-            const idCarroRecebido = parseInt(req.params.idCarro as string);
+        try { // Tenta atualizar um carro
+            const carroRecebido: CarroDTO = req.body; // Recebe os dados do carro do corpo da requisição
+            const idCarroRecebido = parseInt(req.params.idCarro as string); // Recebe o ID do carro a ser atualizado
 
             // instanciando um objeto do tipo carro
             const carroAtualizado = new Carro(
@@ -145,26 +118,17 @@ export class CarroController extends Carro {
                 carroRecebido.cor
             );
 
-            // adicionando o ID do carro no objeto carroAtualizado
-            carroAtualizado.setIdCarro(idCarroRecebido);
+            carroAtualizado.setIdCarro(idCarroRecebido); // Atribui o ID do carro ao objeto
+            const respostaModelo = await Carro.atualizarCarro(carroAtualizado); // Chama o método de atualização de carro da classe Carro
 
-            // chamando a função de atualizar o carro e guardando a resposta (booleano)
-            const respostaModelo = await Carro.atualizarCarro(carroAtualizado);
-
-            // verifica se a respota do modelo é true
-            if(respostaModelo) {
-                // retorna um status 200 com uma mensagem de sucesso
-                return res.status(200).json({ mensagem: "Carro atualizado com sucesso!"});
-            } else {
-                // retorna um status 400 com uma mensagem de erro
-                return res.status(400).json({ mensagem: "Não foi possível atualizar o carro. Entre em contato com o administrador do sistema." });
+            if(respostaModelo) { // Se a resposta do método for verdadeira
+                return res.status(200).json({ mensagem: "Carro atualizado com sucesso!"}); // Retorna uma mensagem de sucesso
+            } else { // Se a resposta do método for falsa
+                return res.status(400).json({ mensagem: "Não foi possível atualizar o carro. Entre em contato com o administrador do sistema." }); // Retorna uma mensagem de erro
             }
-        } catch (error) {
-            // lança uma mensagem de erro no console
-            console.log(`Erro ao atualizar um carro. ${error}`);
-
-            // retorna uma mensagem de erro há quem chamou a mensagem
-            return res.status(400).json({ mensagem: "Não foi possível atualizar o carro. Entre em contato com o administrador do sistema." });
+        } catch (error) { // tratamento de erro
+            console.log(`Erro ao atualizar um carro. ${error}`); // lança uma mensagem de erro no console
+            return res.status(400).json({ mensagem: "Não foi possível atualizar o carro. Entre em contato com o administrador do sistema." }); // retorna uma mensagem de erro há quem chamou a mensagem
         }
     }
 }

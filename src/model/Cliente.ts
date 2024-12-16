@@ -1,8 +1,6 @@
-import { query } from "express";
-import { DatabaseModel } from "./DatabaseModel";
-import { inspect } from "util";
+import { DatabaseModel } from "./DatabaseModel"; // Importa a classe DatabaseModel
 
-const database = new DatabaseModel().pool;
+const database = new DatabaseModel().pool; // Inicializa o pool de conexões com o banco de dados
 
 /**
  * Representa um cliente com identificador único, nome, CPF e telefone.
@@ -34,9 +32,9 @@ export class Cliente {
      * @param telefone - O telefone do cliente.
      */
     constructor(nome: string, cpf: string, telefone: string) {
-        this.nome = nome;
-        this.cpf = cpf;
-        this.telefone = telefone;
+        this.nome = nome; // Define o nome do cliente
+        this.cpf = cpf; // Define o CPF do cliente
+        this.telefone = telefone; // Define o telefone do cliente
     }
 
     /**
@@ -45,7 +43,7 @@ export class Cliente {
      * @returns O identificador único do cliente.
      */
     public getIdCliente(): number {
-        return this.idCliente;
+        return this.idCliente; // Retorna o identificador do cliente
     }
 
     /**
@@ -54,7 +52,7 @@ export class Cliente {
      * @param idCliente - O novo identificador do cliente.
      */
     public setIdCliente(idCliente: number): void {
-        this.idCliente = idCliente;
+        this.idCliente = idCliente; // Define o identificador do cliente
     }
 
     /**
@@ -63,7 +61,7 @@ export class Cliente {
      * @returns O nome do cliente.
      */
     public getNome(): string {
-        return this.nome;
+        return this.nome; // Retorna o nome do cliente
     }
 
     /**
@@ -72,7 +70,7 @@ export class Cliente {
      * @param nome - O nome a ser definido para o cliente.
      */
     public setNome(nome: string): void {
-        this.nome = nome;
+        this.nome = nome; // Define o nome do cliente
     }
 
     /**
@@ -81,7 +79,7 @@ export class Cliente {
      * @returns {string} O CPF do cliente.
      */
     public getCpf(): string {
-        return this.cpf;
+        return this.cpf; // Retorna o CPF do cliente
     }
 
     /**
@@ -90,7 +88,7 @@ export class Cliente {
      * @param cpf - O CPF a ser definido para o cliente.
      */
     public setCpf(cpf: string): void {
-        this.cpf = cpf;
+        this.cpf = cpf; // Define o CPF do cliente
     }
 
     /**
@@ -99,7 +97,7 @@ export class Cliente {
      * @returns {string} O número de telefone do cliente.
      */
     public getTelefone(): string {
-        return this.telefone;
+        return this.telefone; // Retorna o telefone do cliente
     }
 
     /**
@@ -108,7 +106,7 @@ export class Cliente {
      * @param telefone - O número de telefone a ser definido.
      */
     public setTelefone(telefone: string): void {
-        this.telefone = telefone;
+        this.telefone = telefone; // Define o telefone do cliente
     }
 
     /**
@@ -121,29 +119,29 @@ export class Cliente {
      * - Se houver uma falha na consulta ao banco, a função captura o erro, exibe uma mensagem no console e retorna `null`.
      */
     static async listagemClientes(): Promise<Array<Cliente> | null> {
-        const listaDeClientes: Array<Cliente> = [];
+        const listaDeClientes: Array<Cliente> = []; // Inicializa uma lista de clientes vazia
 
-        try {
-            const querySelectCliente = `SELECT * FROM cliente`;
-            const respostaBD = await database.query(querySelectCliente);
+        try { // Tenta buscar a lista de clientes
+            const querySelectCliente = `SELECT * FROM cliente`; // Consulta SQL para buscar todos os clientes
+            const respostaBD = await database.query(querySelectCliente); // Executa a consulta no banco de dados
 
-            respostaBD.rows.forEach((linha) => {
-                const novoCliente = new Cliente(
-                    linha.nome,
-                    linha.cpf,
-                    linha.telefone
+            respostaBD.rows.forEach((linha) => { // Para cada linha retornada
+                const novoCliente = new Cliente( // Cria um novo objeto Cliente
+                    linha.nome, // Define o nome do cliente
+                    linha.cpf, // Define o CPF do cliente
+                    linha.telefone // Define o telefone do cliente
                 );
 
-                novoCliente.setIdCliente(linha.id_cliente);
+                novoCliente.setIdCliente(linha.id_cliente); // Define o ID do cliente
 
-                listaDeClientes.push(novoCliente);
+                listaDeClientes.push(novoCliente); // Adiciona o cliente à lista de clientes
             });
             
-            return listaDeClientes;
-        } catch (error) {
-            console.log('Erro ao buscar lista de carros. Consulte os logs para mais detalhes.');
-            console.log(error);
-            return null;
+            return listaDeClientes; // Retorna a lista de clientes
+        } catch (error) { // Em caso de erro
+            console.log('Erro ao buscar lista de carros. Consulte os logs para mais detalhes.'); // Exibe uma mensagem de erro
+            console.log(error); // Exibe o erro
+            return null; // Retorna nulo
         }
     }
 
@@ -162,24 +160,25 @@ export class Cliente {
      * @throws {Error} - Em caso de erro na consulta ao banco de dados, o erro é registrado no log.
      */
     static async cadastroCliente(cliente: Cliente): Promise<boolean> {
-        try {
+        try { // Tenta cadastrar o cliente
+            // Consulta SQL para inserir um novo cliente
             const queryInsertCliente = `INSERT INTO cliente (nome, cpf, telefone)
                                         VALUES
                                         ('${cliente.getNome()}', '${cliente.getCpf()}', '${cliente.getTelefone()}')
                                         RETURNING id_cliente`;
 
-            const respostaBD = await database.query(queryInsertCliente);
+            const respostaBD = await database.query(queryInsertCliente); // Executa a consulta no banco de dados
 
-            if(respostaBD.rowCount != 0) {
-                console.log(`Cliente cadastrado com sucesso. ID do cliente: ${respostaBD.rows[0].id_cliente}`);
-                return true;
+            if(respostaBD.rowCount != 0) { // Se a consulta retornar algum resultado
+                console.log(`Cliente cadastrado com sucesso. ID do cliente: ${respostaBD.rows[0].id_cliente}`); // Exibe uma mensagem de sucesso
+                return true; // Retorna verdadeiro
             }
 
-            return false;
-        } catch (error) {
-            console.log('Erro ao cadastrar o cliente. Consulte os logs para mais detalhes.');
-            console.log(error);
-            return false;
+            return false; // Retorna falso
+        } catch (error) { // Em caso de erro
+            console.log('Erro ao cadastrar o cliente. Consulte os logs para mais detalhes.'); // Exibe uma mensagem de erro
+            console.log(error); // Exibe o erro
+            return false; // Retorna falso
         }
     }
 
@@ -192,21 +191,21 @@ export class Cliente {
      * @throws Lança um erro se ocorrer um problema durante a execução da consulta.
      */
     static async removerCliente(idCliente: number): Promise<boolean> {
-        try {
-            const queryDeleteCliente = `DELETE FROM cliente WHERE id_cliente=${idCliente}`;
+        try { // Tenta remover o cliente
+            const queryDeleteCliente = `DELETE FROM cliente WHERE id_cliente=${idCliente}`; // Consulta SQL para remover um cliente
 
-            const respostaBD = await database.query(queryDeleteCliente);
+            const respostaBD = await database.query(queryDeleteCliente); // Executa a consulta no banco de dados
 
-            if(respostaBD.rowCount != 0) {
-                console.log(`Carro removido com sucesso. ID removido: ${idCliente}`);
-                return true;
+            if(respostaBD.rowCount != 0) { // Se a consulta retornar algum resultado
+                console.log(`Carro removido com sucesso. ID removido: ${idCliente}`); // Exibe uma mensagem de sucesso
+                return true; // Retorna verdadeiro  
             }
 
-            return false;
-        } catch (error) {
-            console.log('Erro ao remover o cliente. Consulte os logs para mais detalhes.');
-            console.log(error);
-            return false;
+            return false; // Retorna falso
+        } catch (error) { // Em caso de erro
+            console.log('Erro ao remover o cliente. Consulte os logs para mais detalhes.'); // Exibe uma mensagem de erro
+            console.log(error); // Exibe o erro
+            return false; // Retorna falso
         }
     }
 
@@ -219,25 +218,26 @@ export class Cliente {
      * @throws Lança um erro se ocorrer um problema durante a atualização do cliente.
      */
     static async atualizarCliente(cliente: Cliente): Promise<boolean> {
-        try {
+        try { // Tenta atualizar o cliente
+            // Consulta SQL para atualizar um cliente
             const queryUpdateCliente = `UPDATE cliente SET
                                         nome = '${cliente.getNome()}',
                                         cpf = '${cliente.getCpf()}',
                                         telefone = '${cliente.getTelefone()}'
                                         WHERE id_cliente = ${cliente.getIdCliente()};`;
 
-            const respostaBD = await database.query(queryUpdateCliente);
+            const respostaBD = await database.query(queryUpdateCliente); // Executa a consulta no banco de dados
 
-            if(respostaBD.rowCount != 0) {
-                console.log(`Cliente atualizado com sucesso. ID: ${cliente.getIdCliente()}`);
-                return true;
+            if(respostaBD.rowCount != 0) { // Se a consulta retornar algum resultado
+                console.log(`Cliente atualizado com sucesso. ID: ${cliente.getIdCliente()}`); // Exibe uma mensagem de sucesso
+                return true; // Retorna verdadeiro
             }
 
-            return false;
-        } catch (error) {
-            console.log('Erro ao remover o cliente. Consulte os logs para mais detalhes.');
-            console.log(error);
-            return false;
+            return false; // Retorna falso
+        } catch (error) { // Em caso de erro
+            console.log('Erro ao remover o cliente. Consulte os logs para mais detalhes.'); // Exibe uma mensagem de erro
+            console.log(error); // Exibe o erro
+            return false; // Retorna falso
         }
     }
 }

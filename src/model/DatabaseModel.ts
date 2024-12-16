@@ -1,7 +1,7 @@
-import pg from 'pg';
-import dotenv from 'dotenv';
+import pg from 'pg'; // Importa o pacote pg para conexão com o banco de dados
+import dotenv from 'dotenv'; // Importa o pacote dotenv para carregar as variáveis de ambiente
 
-dotenv.config();
+dotenv.config(); // Carrega as variáveis de ambiente
 
 /**
  * Classe que representa o modelo de banco de dados.
@@ -28,21 +28,19 @@ export class DatabaseModel {
      */
     constructor() {
         // Configuração padrão para conexão com o banco de dados
-        this._config = {
-            user: process.env.DB_USER,
-            host: process.env.DB_HOST,
-            database: process.env.DB_NAME,
-            password: process.env.DB_PASSWORD,
-            port: process.env.DB_PORT,
-            max: 10,
-            idleTimoutMillis: 10000
+        this._config = { // Objeto para configuração para conexão com o banco de dados
+            user: process.env.DB_USER, // Usuário do banco de dados, recuperado do arquivo .env
+            host: process.env.DB_HOST, // Host do banco de dados, recuperado do arquivo .env
+            database: process.env.DB_NAME, // Nome do banco de dados, recuperado do arquivo .env
+            password: process.env.DB_PASSWORD, // Senha do banco de dados, recuperado do arquivo .env
+            port: process.env.DB_PORT, // Porta do banco de dados, recuperado do arquivo .env
+            max: 10, // Número máximo de conexões
+            idleTimoutMillis: 10000 // Tempo máximo de inatividade da conexão
         }
 
-        // Inicialização do pool de conexões
-        this._pool = new pg.Pool(this._config);
+        this._pool = new pg.Pool(this._config); // Inicializa o pool de conexões com a configuração
 
-        // Inicialização do cliente de conexão
-        this._client = new pg.Client(this._config);
+        this._client = new pg.Client(this._config); // Inicializa o cliente de conexão com a configuração
     }
 
     /**
@@ -51,20 +49,16 @@ export class DatabaseModel {
      * @returns **true** caso a conexão tenha sido feita, **false** caso negativo
      */
     public async testeConexao() {
-        try {
-            // Tenta conectar ao banco de dados
-            await this._client.connect();
-            console.log('Database connected!');
-            // Encerra a conexão
-            this._client.end();
-            return true;
-        } catch (error) {
-            // Em caso de erro, exibe uma mensagem de erro
-            console.log('Error to connect database X( ');
-            console.log(error);
-            // Encerra a conexão
-            this._client.end();
-            return false;
+        try { // Tenta conectar ao banco de dados
+            await this._client.connect(); // Conecta ao banco de dados
+            console.log('Database connected!'); // Exibe uma mensagem de sucesso
+            this._client.end(); // Encerra a conexão
+            return true; // Retorna verdadeiro
+        } catch (error) { // Em caso de erro, exibe uma mensagem de erro
+            console.log('Error to connect database X( '); // Exibe uma mensagem de erro
+            console.log(error); // Exibe o erro
+            this._client.end(); // Encerra a conexão
+            return false; // Retorna falso
         }
     }
 
@@ -72,6 +66,6 @@ export class DatabaseModel {
      * Getter para o pool de conexões.
      */
     public get pool() {
-        return this._pool;
+        return this._pool; // Retorna o pool de conexões
     }
 }
